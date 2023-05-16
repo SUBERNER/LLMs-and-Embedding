@@ -5,10 +5,18 @@
 
 #imports
 import os
+import string #holds many string related functions and constants
+from transformers import GPT2Model, GPT2Tokenizer
 
-#varibles
+
+#LMM model variables
+model = GPT2Model.from_pretrained('gpt2') #loads the gpt2 model that have already been trained
+tokenizer = GPT2Tokenizer.from_pretrained('gpt2') #loads gpt2 tokenizer, allowing the model to understand the input
+
+#other varibles
 textData = "" #holds the data the user puts in the input
 literalStringList = [] #holds a list of the words from the input in string format
+alteredStringList = [] #holds a list of the words from the input in string format but also removes punctuation
 embeddingList = [] #holds a list of the words from the input in converted embedded format
 userInput = "0" #stores the input given by the user
 
@@ -61,27 +69,31 @@ elif (userInput == "2"):
                 print("\n-Enter text for embedding-\n")
         except Exception as e: 
             print(e)
-        
-    
-print("Embedding text: " + textData)
-    
-#if user give invalid input, repeat question
+         
+           
+#splits text after each word from user input into, then stores words in list
+#dose not remove punctuation
+for word in textData.split():
+    literalStringList.append(word)
+print(literalStringList)
 
-#if user selects file input
-    #file exploer is opened and user selects a file to use
+#removes punctuation
+for word in textData.split():
+    translator = word.maketrans("","",string.punctuation) #determines what is punctuation and needs to be removes
+    alteredStringList.append(word.translate(translator)) #adds to list and removes punctuation for each word
+print(alteredStringList)
 
-#if user selects typing input
-    #program asks user to type the text they want to be processed. Once done the user presses enter
-    #after that the text file is sent to be used
+#embedding user text input
+for word in textData.split():
+    #'pt' is being used, DUE NOT CHANGE unless you change the tensors being used with this program
+    encodedText = tokenizer.encode(word, add_special_tokens = False, return_tensors = "pt")
+    output = model(encodedText)
     
-    
-#Text data from either one is then stored inside of a variable to temperarily hold it until converted correctly
+    word_embedding = output.last_hidden_state.mean(dim=1).squeeze(0)
+    #"dim" specifies the deminsions along which a specific operation should be applied to
+    #"squeeze" removes demensions/removes number of dimesnions from tensor
+print(encodedText)
 
-#lists are then created, one sotring the literal string format of the word
-#the other list holds the converted embedded version of the text
-
-#use a foreach loop and convert each word into a embedded version
-#the loop should then add the converted text into the second list
 
 #the embeded list and the literal string lisr should both be simmeterical
 #if the first value is apple in one list, the other list's first value sould be the embedded text of apple
