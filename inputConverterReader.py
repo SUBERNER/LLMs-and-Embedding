@@ -7,6 +7,7 @@
 import os
 import string #holds many string related functions and constants
 from transformers import GPT2Model, GPT2Tokenizer
+import csv #used to create csv files
 
 
 #LMM model variables
@@ -16,7 +17,7 @@ tokenizer = GPT2Tokenizer.from_pretrained('gpt2') #loads gpt2 tokenizer, allowin
 #other varibles
 textData = "" #holds the data the user puts in the input
 literalStringList = [] #holds a list of the words from the input in string format
-alteredStringList = [] #holds a list of the words from the input in string format but also removes punctuation
+alteredEmbeddingList = [] #holds a list of the words from the input in string format but also removes punctuation
 embeddingList = [] #holds a list of the words from the input in converted embedded format
 userInput = "0" #stores the input given by the user
 
@@ -72,27 +73,24 @@ elif (userInput == "2"):
          
            
 #splits text after each word from user input into, then stores words in list
-#dose not remove punctuation
-for word in textData.split():
-    literalStringList.append(word)
-print(literalStringList)
-
-#removes punctuation
+#literal texrt from user input
 for word in textData.split():
     translator = word.maketrans("","",string.punctuation) #determines what is punctuation and needs to be removes
-    alteredStringList.append(word.translate(translator)) #adds to list and removes punctuation for each word
-print(alteredStringList)
+    literalStringList.append(word.translate(translator))
+print(literalStringList)
 
 #embedding user text input
 for word in textData.split():
+    translator = word.maketrans("","",string.punctuation) #determines what is punctuation and needs to be removes
     #'pt' is being used, DUE NOT CHANGE unless you change the tensors being used with this program
-    encodedText = tokenizer.encode(word, add_special_tokens = False, return_tensors = "pt")
+    encodedText = tokenizer.encode(word.translate(translator), add_special_tokens = False, return_tensors = "pt")
     output = model(encodedText)
     
-    word_embedding = output.last_hidden_state.mean(dim=1).squeeze(0)
+    wordEmbedding = output.last_hidden_state.mean(dim = 1).squeeze(0)
+    embeddingList.append(wordEmbedding)
     #"dim" specifies the deminsions along which a specific operation should be applied to
     #"squeeze" removes demensions/removes number of dimesnions from tensor
-print(encodedText)
+print(embeddingList)
 
 
 #the embeded list and the literal string lisr should both be simmeterical
