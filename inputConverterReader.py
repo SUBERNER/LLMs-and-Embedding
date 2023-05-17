@@ -3,11 +3,13 @@
 #Program takes the data and gives it to other program files to format and convert it correctly
 #Finally, it will be send and stored inside a CSV file
 
+
 #imports
 import os
 import string #holds many string related functions and constants
 from transformers import GPT2Model, GPT2Tokenizer
-import csv #used to create csv files
+import csvManager as cm #used for everything involving csv
+
 
 
 #LMM model variables
@@ -15,9 +17,10 @@ model = GPT2Model.from_pretrained('gpt2') #loads the gpt2 model that have alread
 tokenizer = GPT2Tokenizer.from_pretrained('gpt2') #loads gpt2 tokenizer, allowing the model to understand the input
 
 #other varibles
+filePath = r"C:\Users\tompk\LLMs-and-Embedding\output files\datatest.csv" #Hold the name for the CSV file
 textData = "" #holds the data the user puts in the input
-literalStringList = [] #holds a list of the words from the input in string format
-alteredEmbeddingList = [] #holds a list of the words from the input in string format but also removes punctuation
+temporaryList= [] #temporary holds the word and embedding of that same word until put into the main wordList
+wordList = [] #holds a list of all the words and their embedded format
 embeddingList = [] #holds a list of the words from the input in converted embedded format
 userInput = "0" #stores the input given by the user
 
@@ -50,7 +53,7 @@ if (userInput == "1"):
             if (os.path.exists(filePath) and os.path.isfile(filePath)): #makes sure selected file exists and is a file
                 with open(filePath,"r") as file:
                     textData = file.read() #gets text from file
-                break
+                    break
             else:
                 print("\n-Enter valid file for embedding-\n")
 
@@ -70,36 +73,44 @@ elif (userInput == "2"):
                 print("\n-Enter text for embedding-\n")
         except Exception as e: 
             print(e)
-         
-           
-#splits text after each word from user input into, then stores words in list
-#literal texrt from user input
-for word in textData.split():
-    translator = word.maketrans("","",string.punctuation) #determines what is punctuation and needs to be removes
-    literalStringList.append(word.translate(translator))
-print(literalStringList)
+            
+#asks user for location of the CSV file 
+print("\nEnter CVS file location for appending below:")
+while(False):
+    try:
+        filePath = input() #stores the path to user selected file
+        
+        if (os.path.exists(filePath) and os.path.isfile(filePath)): #makes sure selected file exists and is a file
+            with open(filePath,"r") as file:
+                break
+        else:
+            print("\n-Enter a valid CSV file-\n")
 
-#embedding user text input
+    except Exception as e: 
+        print(e)    
+         
+#splits text after each word from user input into, then stores words in list
+#creates the CSV file and stores all the data inside
+print("\n-Creating CSV file-")
 for word in textData.split():
+    temporaryList.clear() #removes values to get ready for new word
+    #takes word in literal string form and stores in temporary list
     translator = word.maketrans("","",string.punctuation) #determines what is punctuation and needs to be removes
+    temporaryList.append(word.translate(translator))
+
+    #converts user input to embedded format and stores in temporary list
     #'pt' is being used, DUE NOT CHANGE unless you change the tensors being used with this program
     encodedText = tokenizer.encode(word.translate(translator), add_special_tokens = False, return_tensors = "pt")
     output = model(encodedText)
-    
-    wordEmbedding = output.last_hidden_state.mean(dim = 1).squeeze(0)
-    embeddingList.append(wordEmbedding)
+    embeddedText = output.last_hidden_state.mean(dim = 1).squeeze(0)
     #"dim" specifies the deminsions along which a specific operation should be applied to
     #"squeeze" removes demensions/removes number of dimesnions from tensor
-print(embeddingList)
+    temporaryList.append(embeddedText)
+    wordList.append(temporaryList) #storing value example: [word, embedded]
 
+cm.AppendData(filePath, "a", wordList) #creates the CSV file
+print("-Completed CSV file-\n")
 
-#the embeded list and the literal string lisr should both be simmeterical
-#if the first value is apple in one list, the other list's first value sould be the embedded text of apple
-
-#additionally, use another database to compare the accuracty of the emmbedding used by this program
-
-#then the list is in another foreach loop
-#with each word and corresponding embedding being added in a row in the CVS file
 
 #user presses enter again once ready to end the program
 input("Press ENTER to exit program")
