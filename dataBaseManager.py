@@ -5,7 +5,7 @@
 
 #imports
 import csv #used to create csv files
-
+import chromadb #used to manage to chroma database
 
 #varibles
 

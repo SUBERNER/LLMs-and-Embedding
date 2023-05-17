@@ -3,13 +3,13 @@
 #Program takes the data and gives it to other program files to format and convert it correctly
 #Finally, it will be send and stored inside a CSV file
 
+print("-Please Wait-\n")
 
 #imports
 import os
 import string #holds many string related functions and constants
 from transformers import GPT2Model, GPT2Tokenizer
-import csvManager as cm #used for everything involving csv
-
+import dataBaseManager as dbm #used for everything involving csv
 
 
 #LMM model variables
@@ -17,7 +17,7 @@ model = GPT2Model.from_pretrained('gpt2') #loads the gpt2 model that have alread
 tokenizer = GPT2Tokenizer.from_pretrained('gpt2') #loads gpt2 tokenizer, allowing the model to understand the input
 
 #other varibles
-filePath = r"C:\Users\tompk\LLMs-and-Embedding\output files\datatest.csv" #Hold the name for the CSV file
+filePath = "" #Hold the name for the CSV file
 textData = "" #holds the data the user puts in the input
 temporaryList= [] #temporary holds the word and embedding of that same word until put into the main wordList
 wordList = [] #holds a list of all the words and their embedded format
@@ -76,7 +76,7 @@ elif (userInput == "2"):
             
 #asks user for location of the CSV file 
 print("\nEnter CVS file location for appending below:")
-while(False):
+while(True):
     try:
         filePath = input() #stores the path to user selected file
         
@@ -93,22 +93,27 @@ while(False):
 #creates the CSV file and stores all the data inside
 print("\n-Creating CSV file-")
 for word in textData.split():
-    temporaryList.clear() #removes values to get ready for new word
+    #being honest, these 2 lines are duck tape
+    #to make sure the CVS file organizes and appends data properly
+    temporaryList.clear()
+    wordList.clear()
+    
     #takes word in literal string form and stores in temporary list
     translator = word.maketrans("","",string.punctuation) #determines what is punctuation and needs to be removes
     temporaryList.append(word.translate(translator))
 
+    encodedText = tokenizer.encode(word.translate(translator), add_special_tokens = False, return_tensors = "pt")
     #converts user input to embedded format and stores in temporary list
     #'pt' is being used, DUE NOT CHANGE unless you change the tensors being used with this program
-    encodedText = tokenizer.encode(word.translate(translator), add_special_tokens = False, return_tensors = "pt")
+    
     output = model(encodedText)
     embeddedText = output.last_hidden_state.mean(dim = 1).squeeze(0)
     #"dim" specifies the deminsions along which a specific operation should be applied to
     #"squeeze" removes demensions/removes number of dimesnions from tensor
+    
     temporaryList.append(embeddedText)
     wordList.append(temporaryList) #storing value example: [word, embedded]
-
-cm.AppendData(filePath, "a", wordList) #creates the CSV file
+    dbm.AppendData(filePath, "a", wordList) #creates the CSV file
 print("-Completed CSV file-\n")
 
 
