@@ -1,11 +1,18 @@
-#csvManager
+#dataBaseManager.py
 #Class used to create and manage functions for csv files
 #all current and future functions and systems working with csv should be held here for organization reasons
 
 
 #imports
-import csv #used to create csv files
-import chromadb #used to manage to chroma database
+try:
+    import csv #used to create csv files
+    import chromadb #used to manage to chroma database
+except ImportError as e:
+    print("\nOne or more required imports not found:")
+    print("-csv-")
+    print("-chromadb-")
+    print("\nDetailed error message:")
+    print(e)
 
 #varibles
 
