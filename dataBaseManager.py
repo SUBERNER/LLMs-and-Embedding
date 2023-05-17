@@ -1,4 +1,4 @@
-#csvManager
+#dataBaseManager.py
 #Class used to create and manage functions for csv files
 #all current and future functions and systems working with csv should be held here for organization reasons
 

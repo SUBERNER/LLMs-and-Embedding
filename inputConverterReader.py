@@ -1,15 +1,16 @@
-#inputConverterReader
+#inputConverterReader.py
 #Asks user to select a file
 #Program takes the data and gives it to other program files to format and convert it correctly
 #Finally, it will be send and stored inside a CSV file
-
 print("-Please Wait-\n")
+
 
 #imports
 import os
 import string #holds many string related functions and constants
-from transformers import GPT2Model, GPT2Tokenizer
+from transformers import GPT2Model, GPT2Tokenizer, BertModel, BertTokenizer
 import dataBaseManager as dbm #used for everything involving csv
+import embeddingConversion as ec #used for all the embeddings
 
 
 #LMM model variables
@@ -17,7 +18,7 @@ model = GPT2Model.from_pretrained('gpt2') #loads the gpt2 model that have alread
 tokenizer = GPT2Tokenizer.from_pretrained('gpt2') #loads gpt2 tokenizer, allowing the model to understand the input
 
 #other varibles
-filePath = "" #Hold the name for the CSV file
+filePath = r"C:\Users\tompk\LLMs-and-Embedding\Tester.csv" #Hold the name for the CSV file
 textData = "" #holds the data the user puts in the input
 temporaryList= [] #temporary holds the word and embedding of that same word until put into the main wordList
 wordList = [] #holds a list of all the words and their embedded format
@@ -76,7 +77,7 @@ elif (userInput == "2"):
             
 #asks user for location of the CSV file 
 print("\nEnter CVS file location for appending below:")
-while(True):
+while(False):
     try:
         filePath = input() #stores the path to user selected file
         
@@ -111,7 +112,14 @@ for word in textData.split():
     #"dim" specifies the deminsions along which a specific operation should be applied to
     #"squeeze" removes demensions/removes number of dimesnions from tensor
     
+    #used for gpt2
+    embeddedText = ec.EmbeddingText("gpt2", word)
     temporaryList.append(embeddedText)
+    
+    #used for bert
+    embeddedText = ec.EmbeddingText("bert-base-uncased", word)
+    temporaryList.append(embeddedText)
+    
     wordList.append(temporaryList) #storing value example: [word, embedded]
     dbm.AppendData(filePath, "a", wordList) #creates the CSV file
 print("-Completed CSV file-\n")
