@@ -4,8 +4,19 @@
 
 
 #imports
-from transformers import GPT2Model, GPT2Tokenizer, BertModel, BertTokenizer
-
+try:
+    from transformers import GPT2Model, GPT2Tokenizer, BertModel, BertTokenizer
+except ImportError as e:
+    print("\nOne or more required imports not found:")
+    print("-transformers-")
+    print("-GPT2Model-")
+    print("-GPT2Tokenizer-")
+    print("-BertModel-")
+    print("-BertTokenizer-")
+    print("\nDetailed error message:")
+    print(e)
+    
+    
 #LMM model variables
 
 

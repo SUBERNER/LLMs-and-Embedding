@@ -6,19 +6,21 @@ print("-Please Wait-\n")
 
 
 #imports
-import os
-import string #holds many string related functions and constants
-from transformers import GPT2Model, GPT2Tokenizer, BertModel, BertTokenizer
-import dataBaseManager as dbm #used for everything involving csv
-import embeddingConversion as ec #used for all the embeddings
+try:
+    import os
+    import string #holds many string related functions and constants
+    import dataBaseManager as dbm #used for everything involving csv
+    import embeddingConversion as ec #used for all the embeddings
+except ImportError as e:
+    print("\nOne or more required imports not found:")
+    print("-os-")
+    print("-string-")
+    print("\nDetailed error message:")
+    print(e)
 
 
-#LMM model variables
-model = GPT2Model.from_pretrained('gpt2') #loads the gpt2 model that have already been trained
-tokenizer = GPT2Tokenizer.from_pretrained('gpt2') #loads gpt2 tokenizer, allowing the model to understand the input
-
-#other varibles
-filePath = r"C:\Users\tompk\LLMs-and-Embedding\Tester.csv" #Hold the name for the CSV file
+#varibles
+filePath = "" #Hold the name for the CSV file
 textData = "" #holds the data the user puts in the input
 temporaryList= [] #temporary holds the word and embedding of that same word until put into the main wordList
 wordList = [] #holds a list of all the words and their embedded format
@@ -40,7 +42,7 @@ while(True):
         else:
             print("\n-Enter a valid input-\n")     
     except Exception as e: 
-            print(e)
+        print(e)
     
     
 #if user selected file, file exploerer will open up 
@@ -77,7 +79,7 @@ elif (userInput == "2"):
             
 #asks user for location of the CSV file 
 print("\nEnter CVS file location for appending below:")
-while(False):
+while(True):
     try:
         filePath = input() #stores the path to user selected file
         
@@ -102,15 +104,6 @@ for word in textData.split():
     #takes word in literal string form and stores in temporary list
     translator = word.maketrans("","",string.punctuation) #determines what is punctuation and needs to be removes
     temporaryList.append(word.translate(translator))
-
-    encodedText = tokenizer.encode(word.translate(translator), add_special_tokens = False, return_tensors = "pt")
-    #converts user input to embedded format and stores in temporary list
-    #'pt' is being used, DUE NOT CHANGE unless you change the tensors being used with this program
-    
-    output = model(encodedText)
-    embeddedText = output.last_hidden_state.mean(dim = 1).squeeze(0)
-    #"dim" specifies the deminsions along which a specific operation should be applied to
-    #"squeeze" removes demensions/removes number of dimesnions from tensor
     
     #used for gpt2
     embeddedText = ec.EmbeddingText("gpt2", word)
