@@ -12,10 +12,6 @@ try:
     import dataBaseManager as dbm #used for everything involving csv
     import embeddingConversion as ec #used for all the embeddings
 except ImportError as e:
-    print("\nOne or more required imports not found:")
-    print("-os-")
-    print("-string-")
-    print("\nDetailed error message:")
     print(e)
 
 
@@ -91,7 +87,8 @@ while(True):
 
     except Exception as e: 
         print(e)    
-         
+
+
 #splits text after each word from user input into, then stores words in list
 #creates the CSV file and stores all the data inside
 print("\n-Creating CSV file-")
@@ -112,6 +109,9 @@ for word in textData.split():
     #used for bert
     embeddedText = ec.EmbeddingText("bert-base-uncased", word)
     temporaryList.append(embeddedText)
+    
+    #used to compared both LLMs
+    temporaryList.append(ec.CompareEmbeddings(temporaryList[1], temporaryList[2]))
     
     wordList.append(temporaryList) #storing value example: [word, embedded]
     dbm.AppendData(filePath, "a", wordList) #creates the CSV file

@@ -6,4 +6,4 @@ A program that evaluates how well a language model performs at generating useful
 
 2. select a CSV file to store the embedded word data. Similar to part of the last step, type the file location of the CSV file.
 
-3. Embedding the words and the words themselfs will then be generated and stored inside of the CVS file. The first collum is the word in its normal form. The second collum is the embedding data provided by GPT2. The last collum is the embedding data provided by BERT.
+3. Embedding the words and the words themselfs will then be generated and stored inside of the CVS file. The first column is the word in its normal form. The second column is the embedding data provided by GPT2. The second to last column is the embedding data provided by BERT. The last column is used to show the similarity between the embedding of each LLM.
