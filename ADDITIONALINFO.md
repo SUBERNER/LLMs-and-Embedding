@@ -26,4 +26,4 @@ The approach used was Using 2 LLMs to compare the accuracy and there results wit
 # Additional notes
 I beleive this can be scalable due to how it was organized and made, the suggestions made can be easily added and scaled to more complex operations, such as the storage of the data, using file explorer, and with the classes.
 
-Due to the time of 3 days and my skill level, there is a "bug" it seems, displays an error when embedding each word. However, I do not see it affected the results based on my knowing, more time could be used to fix these many problems.
+Due to the time of 3 days and my skill level, there is a "bug" it seems, displays an error when embedding each word. However, I do not see it affecting the results based on my knowledge, I was able to achieve the original goal based on what was given at the start but sadly could not finish in the time needed. More time could get this fully done.
