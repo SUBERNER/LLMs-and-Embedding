@@ -6,16 +6,10 @@
 #imports
 try:
     import csv #used to create csv files
-    import chromadb #used to manage to chroma database
 except ImportError as e:
-    print("\nOne or more required imports not found:")
-    print("-csv-")
-    print("-chromadb-")
-    print("\nDetailed error message:")
     print(e)
 
 #varibles
-
 
 #used when creating the csv file
 def AppendData(fileName:str, fileAccessMode:str, userData:list):
@@ -25,4 +19,5 @@ def AppendData(fileName:str, fileAccessMode:str, userData:list):
             writer.writerows(userData)
     except Exception as e: 
         print(e)
-        
+    
+
